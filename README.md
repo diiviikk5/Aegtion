@@ -43,6 +43,7 @@ node ./bin/aegtion.js run ./examples/repo-sanity.aegtion.yaml --yes
 node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml
 node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml --format json
 node ./bin/aegtion.js comment ./examples/landing-page-review.aegtion.yaml
+node ./bin/aegtion.js graph ./examples/landing-page-review.aegtion.yaml
 ```
 
 The run creates:
@@ -110,6 +111,7 @@ Most agent tools optimize for magic. Aegtion optimizes for review:
 - browser/code/model tasks share one trace
 - failed runs can become PR comments later
 - the workflow file is small enough to understand at a glance
+- workflows can be viewed as node/edge graphs, inspired by [vercel-labs/zerolang](https://github.com/vercel-labs/zerolang)
 
 ## Next milestones
 

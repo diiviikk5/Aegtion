@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { formatAdapters, listAdapters } from "../src/adapters.js";
 import { formatDoctor, runDoctor } from "../src/doctor.js";
+import { formatGraph, workflowToGraph } from "../src/graph.js";
 import { initWorkflow, showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
 
 const args = process.argv.slice(2);
@@ -21,6 +22,7 @@ Usage:
   aegtion check <workflow.yaml|json>
   aegtion latest <workflow.yaml|json> [--format text|json]
   aegtion comment <workflow.yaml|json>
+  aegtion graph <workflow.yaml|json> [--format text|json]
   aegtion init [workflow.yaml]
   aegtion doctor
   aegtion adapters
@@ -103,6 +105,13 @@ try {
     const workflow = checkWorkflow(source, absolutePath);
     console.log(`Workflow OK: ${workflow.name}`);
     console.log(`Steps: ${workflow.steps.length}`);
+    process.exit(0);
+  }
+
+  if (command === "graph") {
+    const workflow = checkWorkflow(source, absolutePath);
+    const graph = workflowToGraph(workflow);
+    console.log(outputFormat === "json" ? JSON.stringify(graph, null, 2) : formatGraph(graph));
     process.exit(0);
   }
 
