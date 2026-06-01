@@ -9,6 +9,8 @@ const command = args[0];
 const workflowPath = args[1];
 
 const flags = new Set(args.slice(2));
+const formatIndex = args.indexOf("--format");
+const outputFormat = formatIndex >= 0 ? args[formatIndex + 1] : "text";
 
 function printHelp() {
   console.log(`Aegtion
@@ -16,7 +18,7 @@ function printHelp() {
 Usage:
   aegtion run <workflow.yaml|json> [--yes] [--dry-run]
   aegtion check <workflow.yaml|json>
-  aegtion latest <workflow.yaml|json>
+  aegtion latest <workflow.yaml|json> [--format text|json]
   aegtion init [workflow.yaml]
   aegtion doctor
 
@@ -60,6 +62,10 @@ try {
 
   if (command === "latest") {
     const latest = await showLatestRun(absolutePath);
+    if (outputFormat === "json") {
+      console.log(JSON.stringify(latest, null, 2));
+      process.exit(0);
+    }
     console.log(`Latest run: ${latest.runDir}`);
     console.log(`Report: ${latest.reportPath}`);
     console.log(`Preview comment: ${latest.previewCommentPath}`);

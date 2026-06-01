@@ -40,6 +40,7 @@ node ./bin/aegtion.js doctor
 node ./bin/aegtion.js run ./examples/landing-page-review.aegtion.yaml --yes
 node ./bin/aegtion.js run ./examples/repo-sanity.aegtion.yaml --yes
 node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml
+node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml --format json
 ```
 
 The run creates:
