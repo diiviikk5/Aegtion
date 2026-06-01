@@ -1,0 +1,8 @@
+.aegtion/
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+.env
+.env.*
+!.env.example

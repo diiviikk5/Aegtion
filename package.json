@@ -1,0 +1,25 @@
+{
+  "name": "aegtion",
+  "version": "0.1.0",
+  "description": "Local-first agent workflow runner for AI, browser, code, shell, and approval steps.",
+  "type": "module",
+  "bin": {
+    "aegtion": "./bin/aegtion.js"
+  },
+  "scripts": {
+    "start": "node ./bin/aegtion.js run ./examples/landing-page-review.aegtion.yaml --yes",
+    "check": "node ./bin/aegtion.js check ./examples/landing-page-review.aegtion.yaml",
+    "demo": "node ./bin/aegtion.js run ./examples/landing-page-review.aegtion.yaml --yes"
+  },
+  "keywords": [
+    "agents",
+    "workflow",
+    "ci",
+    "browser-agents",
+    "ai"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
