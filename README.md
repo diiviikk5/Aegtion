@@ -88,6 +88,7 @@ Native adapter detection:
 
 - `ai` from [vercel-labs/ai-cli](https://github.com/vercel-labs/ai-cli): `ai text --format md "<prompt>"`
 - `agent-browser` from [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser): `agent-browser chat "<task>"`
+- `code` steps emit structured coding-agent task payloads compatible with hosted workers like [vercel-labs/coding-agent-template](https://github.com/vercel-labs/coding-agent-template)
 
 ```bash
 AEGTION_AI_COMMAND="ai" node ./bin/aegtion.js run ./workflow.yaml

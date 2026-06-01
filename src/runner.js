@@ -160,6 +160,23 @@ async function runAdapterStep(label, adapterCommand, prompt, step, runDir) {
   const adapter = await resolveAdapter(label, adapterCommand);
 
   if (adapter.kind === "artifact") {
+    const structuredTask = label === "Code"
+      ? [
+          "",
+          "Coding agent task payload:",
+          "",
+          "```json",
+          JSON.stringify({
+            type: "coding-agent-task",
+            source: "aegtion",
+            stepId: step.id,
+            stepName: step.name,
+            task: prompt,
+            expectedArtifacts: ["patch", "summary", "validation"]
+          }, null, 2),
+          "```"
+        ].join("\n")
+      : "";
     const artifact = await writeArtifact(
       runDir,
       `${step.id}-${label.toLowerCase()}.md`,
@@ -174,7 +191,8 @@ async function runAdapterStep(label, adapterCommand, prompt, step, runDir) {
         "",
         "Prompt:",
         "",
-        prompt
+        prompt,
+        structuredTask
       ].join("\n")
     );
     return { status: "passed", summary: `${label} prompt artifact created.`, artifact };
