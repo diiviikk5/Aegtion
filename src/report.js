@@ -17,6 +17,7 @@ export async function writeArtifact(runDir, name, content) {
 }
 
 export async function writeReport(runDir, workflow, events, status) {
+  const prComment = renderPrComment(workflow, events, status);
   const lines = [
     `# ${workflow.name}`,
     "",
@@ -41,10 +42,11 @@ export async function writeReport(runDir, workflow, events, status) {
 
   lines.push("## PR Comment");
   lines.push("");
-  lines.push(renderPrComment(workflow, events, status));
+  lines.push(prComment);
 
   const reportPath = join(runDir, "report.md");
   await writeFile(reportPath, lines.join("\n"), "utf8");
+  await writeFile(join(runDir, "preview-comment.md"), prComment, "utf8");
   await writeFile(join(runDir, "trace.json"), JSON.stringify({ workflow, status, events }, null, 2), "utf8");
   return reportPath;
 }

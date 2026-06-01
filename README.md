@@ -44,6 +44,7 @@ The run creates:
 ```txt
 .aegtion/runs/<timestamp>-<workflow-name>/
   report.md
+  preview-comment.md
   trace.json
   artifacts/
 ```
