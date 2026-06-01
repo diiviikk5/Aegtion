@@ -54,6 +54,23 @@ function validateWorkflow(workflow) {
       }
       ids.add(step.id);
     }
+
+    if (step.needs && typeof step.needs !== "string") {
+      throw new Error(`Step ${index + 1} needs must be a comma-separated string.`);
+    }
+  }
+
+  for (const [index, step] of workflow.steps.entries()) {
+    if (!step.needs) continue;
+    const needs = step.needs.split(",").map((need) => need.trim()).filter(Boolean);
+    for (const need of needs) {
+      if (!ids.has(need)) {
+        throw new Error(`Step ${index + 1} depends on unknown step id: ${need}`);
+      }
+      if (need === step.id) {
+        throw new Error(`Step ${index + 1} cannot depend on itself.`);
+      }
+    }
   }
 }
 

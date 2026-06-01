@@ -75,6 +75,7 @@ Supported steps:
 - `note`: records context in the run
 
 Step IDs are optional, but if provided they must be unique and use only letters, numbers, underscores, or hyphens.
+Use `needs: step-id` or `needs: first,second` to skip a step unless its dependencies passed.
 
 ## Adapter commands
 

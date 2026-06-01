@@ -10,6 +10,8 @@ steps:
   - id: browser-qa
     browser: "Open http://localhost:3000, test the signup path, capture a screenshot, and report any blocking UX issues."
   - id: approval
+    needs: copy-review,browser-qa
     approval: "Approve creating a code-fix task from the review findings?"
   - id: code-fix
+    needs: approval
     code: "Apply the top safe fixes from the AI review and browser QA. Keep changes small and produce a patch summary."

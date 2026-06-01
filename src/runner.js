@@ -76,6 +76,15 @@ export async function runWorkflow(source, workflowPath, options = {}) {
     };
 
     try {
+      const unmet = getUnmetNeeds(step, events);
+      if (unmet.length > 0) {
+        event.status = "skipped";
+        event.summary = `Skipped because dependencies did not pass: ${unmet.join(", ")}`;
+        event.durationMs = Date.now() - started;
+        events.push(event);
+        continue;
+      }
+
       const result = await runStep(type, step, runDir, options);
       event.status = result.status;
       event.summary = result.summary;
@@ -102,6 +111,12 @@ export async function runWorkflow(source, workflowPath, options = {}) {
 
 function getStepType(step) {
   return ["shell", "ai", "browser", "code", "approval", "note"].find((key) => key in step);
+}
+
+function getUnmetNeeds(step, events) {
+  if (!step.needs) return [];
+  const passedIds = new Set(events.filter((event) => event.status === "passed").map((event) => event.id));
+  return step.needs.split(",").map((need) => need.trim()).filter((need) => need && !passedIds.has(need));
 }
 
 async function runStep(type, step, runDir, options) {
