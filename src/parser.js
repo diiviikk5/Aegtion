@@ -37,10 +37,22 @@ function validateWorkflow(workflow) {
     throw new Error("Workflow must include at least one step.");
   }
 
+  const ids = new Set();
+
   for (const [index, step] of workflow.steps.entries()) {
     const stepTypes = Object.keys(step).filter((key) => STEP_TYPES.has(key));
     if (stepTypes.length !== 1) {
       throw new Error(`Step ${index + 1} must include exactly one step type: ${[...STEP_TYPES].join(", ")}.`);
+    }
+
+    if (step.id) {
+      if (!/^[A-Za-z0-9_-]+$/.test(step.id)) {
+        throw new Error(`Step ${index + 1} has an invalid id. Use letters, numbers, underscores, or hyphens.`);
+      }
+      if (ids.has(step.id)) {
+        throw new Error(`Duplicate step id: ${step.id}`);
+      }
+      ids.add(step.id);
     }
   }
 }

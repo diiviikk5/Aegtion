@@ -73,6 +73,8 @@ Supported steps:
 - `approval`: pauses for human approval unless `--yes` is passed
 - `note`: records context in the run
 
+Step IDs are optional, but if provided they must be unique and use only letters, numbers, underscores, or hyphens.
+
 ## Adapter commands
 
 Aegtion is intentionally adapter-based. If a command is not configured, it still creates reviewable artifacts instead of pretending it ran an agent.
