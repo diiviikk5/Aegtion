@@ -12,6 +12,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: node ./bin/aegtion.js doctor
       - run: npm run check
       - run: npm run demo
       - run: node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml
+      - run: node ./bin/aegtion.js latest ./examples/landing-page-review.aegtion.yaml --format json
+      - run: node ./bin/aegtion.js comment ./examples/landing-page-review.aegtion.yaml
