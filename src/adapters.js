@@ -16,6 +16,48 @@ export async function resolveAdapter(label, configuredCommand) {
   return { kind: "artifact" };
 }
 
+export async function listAdapters() {
+  return [
+    {
+      stepType: "ai",
+      repo: "vercel-labs/ai-cli",
+      nativeCommand: "ai",
+      detected: await commandExists("ai"),
+      overrideEnv: "AEGTION_AI_COMMAND",
+      defaultInvocation: "ai text --format md <prompt>"
+    },
+    {
+      stepType: "browser",
+      repo: "vercel-labs/agent-browser",
+      nativeCommand: "agent-browser",
+      detected: await commandExists("agent-browser"),
+      overrideEnv: "AEGTION_BROWSER_COMMAND",
+      defaultInvocation: "agent-browser chat <task>"
+    },
+    {
+      stepType: "code",
+      repo: "vercel-labs/coding-agent-template",
+      nativeCommand: null,
+      detected: Boolean(process.env.AEGTION_CODE_COMMAND),
+      overrideEnv: "AEGTION_CODE_COMMAND",
+      defaultInvocation: "custom coding-agent command"
+    }
+  ];
+}
+
+export function formatAdapters(adapters) {
+  const lines = ["Aegtion adapters", ""];
+
+  for (const adapter of adapters) {
+    const status = adapter.detected ? "ready" : "missing";
+    lines.push(`${status.padEnd(8)} ${adapter.stepType} -> ${adapter.repo}`);
+    lines.push(`         command: ${adapter.defaultInvocation}`);
+    lines.push(`         override: ${adapter.overrideEnv}`);
+  }
+
+  return lines.join("\n");
+}
+
 export function runAdapter(adapter, prompt, env) {
   if (adapter.kind === "command") {
     return runCommand(adapter.command, { env });

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { formatAdapters, listAdapters } from "../src/adapters.js";
 import { formatDoctor, runDoctor } from "../src/doctor.js";
 import { initWorkflow, showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
 
@@ -22,6 +23,7 @@ Usage:
   aegtion comment <workflow.yaml|json>
   aegtion init [workflow.yaml]
   aegtion doctor
+  aegtion adapters
 
 Environment adapters:
   AEGTION_AI_COMMAND       Command used for ai steps.
@@ -40,6 +42,11 @@ if (!command || command === "help" || command === "--help" || command === "-h") 
 }
 
 try {
+  if (command === "adapters") {
+    console.log(formatAdapters(await listAdapters()));
+    process.exit(0);
+  }
+
   if (command === "doctor") {
     const results = await runDoctor();
     console.log(formatDoctor(results));
