@@ -1,0 +1,15 @@
+name: landing-page-review
+description: Agent-native preview workflow for a landing page change.
+steps:
+  - id: context
+    note: "This workflow previews a product-page change with shell checks, AI review, browser QA, human approval, and a code task."
+  - id: files
+    shell: "node --version"
+  - id: copy-review
+    ai: "Review the landing page copy for clarity, trust, and conversion. Return only the top 3 issues and suggested edits."
+  - id: browser-qa
+    browser: "Open http://localhost:3000, test the signup path, capture a screenshot, and report any blocking UX issues."
+  - id: approval
+    approval: "Approve creating a code-fix task from the review findings?"
+  - id: code-fix
+    code: "Apply the top safe fixes from the AI review and browser QA. Keep changes small and produce a patch summary."
