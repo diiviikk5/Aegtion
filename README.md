@@ -80,7 +80,12 @@ Use `needs: step-id` or `needs: first,second` to skip a step unless its dependen
 
 ## Adapter commands
 
-Aegtion is intentionally adapter-based. If a command is not configured, it still creates reviewable artifacts instead of pretending it ran an agent.
+Aegtion is intentionally adapter-based. If a native command is installed, Aegtion uses it. If a command is not available, it still creates reviewable artifacts instead of pretending it ran an agent.
+
+Native adapter detection:
+
+- `ai` from [vercel-labs/ai-cli](https://github.com/vercel-labs/ai-cli): `ai text --format md "<prompt>"`
+- `agent-browser` from [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser): `agent-browser chat "<task>"`
 
 ```bash
 AEGTION_AI_COMMAND="ai" node ./bin/aegtion.js run ./workflow.yaml

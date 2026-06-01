@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
+import { resolveAdapter, runAdapter } from "./adapters.js";
 import { parseWorkflow } from "./parser.js";
 import { createRunDir, writeArtifact, writeReport } from "./report.js";
 
@@ -156,8 +157,9 @@ async function runCommandStep(step, runDir) {
 async function runAdapterStep(label, adapterCommand, prompt, step, runDir) {
   const promptPath = join(runDir, "artifacts", `${step.id}-${label.toLowerCase()}-prompt.md`);
   await writeFile(promptPath, `# ${step.name}\n\n${prompt}\n`, "utf8");
+  const adapter = await resolveAdapter(label, adapterCommand);
 
-  if (!adapterCommand) {
+  if (adapter.kind === "artifact") {
     const artifact = await writeArtifact(
       runDir,
       `${step.id}-${label.toLowerCase()}.md`,
@@ -166,7 +168,7 @@ async function runAdapterStep(label, adapterCommand, prompt, step, runDir) {
         "",
         `${label} adapter was not configured, so Aegtion made this step reviewable instead of silently faking it.`,
         "",
-        "Set this environment variable to execute it:",
+        "Install the native adapter or set this environment variable to execute it:",
         "",
         `\`AEGTION_${label.toUpperCase()}_COMMAND\``,
         "",
@@ -178,16 +180,14 @@ async function runAdapterStep(label, adapterCommand, prompt, step, runDir) {
     return { status: "passed", summary: `${label} prompt artifact created.`, artifact };
   }
 
-  const result = await runCommand(adapterCommand, {
-    cwd: process.cwd(),
-    env: {
-      ...process.env,
-      AEGTION_STEP_NAME: step.name,
-      AEGTION_PROMPT: prompt,
-      AEGTION_PROMPT_FILE: promptPath,
-      AEGTION_RUN_DIR: runDir
-    }
-  });
+  const adapterEnv = {
+    ...process.env,
+    AEGTION_STEP_NAME: step.name,
+    AEGTION_PROMPT: prompt,
+    AEGTION_PROMPT_FILE: promptPath,
+    AEGTION_RUN_DIR: runDir
+  };
+  const result = await runAdapter(adapter, prompt, adapterEnv);
 
   const artifact = await writeArtifact(
     runDir,
