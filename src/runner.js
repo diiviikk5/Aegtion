@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline/promises";
@@ -8,6 +8,32 @@ import { createRunDir, writeArtifact, writeReport } from "./report.js";
 
 export function checkWorkflow(source, workflowPath) {
   return parseWorkflow(source, workflowPath);
+}
+
+export async function showLatestRun(workflowPath) {
+  const runsDir = join(dirname(workflowPath), ".aegtion", "runs");
+  const entries = await readdir(runsDir, { withFileTypes: true });
+  const runs = await Promise.all(
+    entries
+      .filter((entry) => entry.isDirectory())
+      .map(async (entry) => {
+        const runDir = join(runsDir, entry.name);
+        const info = await stat(runDir);
+        return { runDir, mtimeMs: info.mtimeMs };
+      })
+  );
+
+  if (runs.length === 0) {
+    throw new Error(`No runs found in ${runsDir}`);
+  }
+
+  runs.sort((a, b) => b.mtimeMs - a.mtimeMs);
+  const runDir = runs[0].runDir;
+  return {
+    runDir,
+    reportPath: join(runDir, "report.md"),
+    previewCommentPath: join(runDir, "preview-comment.md")
+  };
 }
 
 export async function runWorkflow(source, workflowPath, options = {}) {

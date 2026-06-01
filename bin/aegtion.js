@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { runWorkflow, checkWorkflow } from "../src/runner.js";
+import { showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -15,6 +15,7 @@ function printHelp() {
 Usage:
   aegtion run <workflow.yaml|json> [--yes] [--dry-run]
   aegtion check <workflow.yaml|json>
+  aegtion latest <workflow.yaml|json>
 
 Environment adapters:
   AEGTION_AI_COMMAND       Command used for ai steps.
@@ -39,9 +40,18 @@ if (!workflowPath) {
 }
 
 const absolutePath = resolve(process.cwd(), workflowPath);
-const source = await readFile(absolutePath, "utf8");
 
 try {
+  if (command === "latest") {
+    const latest = await showLatestRun(absolutePath);
+    console.log(`Latest run: ${latest.runDir}`);
+    console.log(`Report: ${latest.reportPath}`);
+    console.log(`Preview comment: ${latest.previewCommentPath}`);
+    process.exit(0);
+  }
+
+  const source = await readFile(absolutePath, "utf8");
+
   if (command === "run") {
     const result = await runWorkflow(source, absolutePath, {
       yes: flags.has("--yes"),
