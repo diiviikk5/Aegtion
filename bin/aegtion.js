@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { formatDoctor, runDoctor } from "../src/doctor.js";
 import { initWorkflow, showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
 
 const args = process.argv.slice(2);
@@ -17,6 +18,7 @@ Usage:
   aegtion check <workflow.yaml|json>
   aegtion latest <workflow.yaml|json>
   aegtion init [workflow.yaml]
+  aegtion doctor
 
 Environment adapters:
   AEGTION_AI_COMMAND       Command used for ai steps.
@@ -35,6 +37,12 @@ if (!command || command === "help" || command === "--help" || command === "-h") 
 }
 
 try {
+  if (command === "doctor") {
+    const results = await runDoctor();
+    console.log(formatDoctor(results));
+    process.exit(results.some((result) => result.required && !result.ok) ? 1 : 0);
+  }
+
   if (command === "init") {
     const targetPath = resolve(process.cwd(), workflowPath || "aegtion.workflow.yaml");
     await initWorkflow(targetPath);
