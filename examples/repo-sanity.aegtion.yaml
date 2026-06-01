@@ -1,0 +1,15 @@
+name: repo-sanity
+description: Quick local workflow for checking a project before handing work to an agent.
+steps:
+  - id: context
+    note: "Run lightweight checks, ask for an agent review plan, and require approval before any code task."
+  - id: node
+    shell: "node --version"
+  - id: git-state
+    shell: "git status --short"
+  - id: review-plan
+    ai: "Review the repository state and propose the safest next 3 engineering actions. Prefer small, verifiable changes."
+  - id: approval
+    approval: "Approve creating a code task from the proposed next actions?"
+  - id: code-task
+    code: "Implement only the safest approved action, then summarize the exact files changed and validation run."

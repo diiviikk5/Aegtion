@@ -36,6 +36,7 @@ Or directly:
 
 ```bash
 node ./bin/aegtion.js run ./examples/landing-page-review.aegtion.yaml --yes
+node ./bin/aegtion.js run ./examples/repo-sanity.aegtion.yaml --yes
 ```
 
 The run creates:
