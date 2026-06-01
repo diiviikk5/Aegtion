@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
+import { initWorkflow, showLatestRun, runWorkflow, checkWorkflow } from "../src/runner.js";
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -16,6 +16,7 @@ Usage:
   aegtion run <workflow.yaml|json> [--yes] [--dry-run]
   aegtion check <workflow.yaml|json>
   aegtion latest <workflow.yaml|json>
+  aegtion init [workflow.yaml]
 
 Environment adapters:
   AEGTION_AI_COMMAND       Command used for ai steps.
@@ -33,15 +34,22 @@ if (!command || command === "help" || command === "--help" || command === "-h") 
   process.exit(0);
 }
 
-if (!workflowPath) {
-  console.error("Missing workflow path.");
-  printHelp();
-  process.exit(1);
-}
-
-const absolutePath = resolve(process.cwd(), workflowPath);
-
 try {
+  if (command === "init") {
+    const targetPath = resolve(process.cwd(), workflowPath || "aegtion.workflow.yaml");
+    await initWorkflow(targetPath);
+    console.log(`Created ${targetPath}`);
+    process.exit(0);
+  }
+
+  if (!workflowPath) {
+    console.error("Missing workflow path.");
+    printHelp();
+    process.exit(1);
+  }
+
+  const absolutePath = resolve(process.cwd(), workflowPath);
+
   if (command === "latest") {
     const latest = await showLatestRun(absolutePath);
     console.log(`Latest run: ${latest.runDir}`);

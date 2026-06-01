@@ -6,6 +6,25 @@ import { stdin as input, stdout as output } from "node:process";
 import { parseWorkflow } from "./parser.js";
 import { createRunDir, writeArtifact, writeReport } from "./report.js";
 
+const STARTER_WORKFLOW = `name: agent-preview
+description: Starter Aegtion workflow.
+steps:
+  - id: context
+    note: "Describe what this workflow should prove before an agent change is merged."
+  - id: check
+    shell: "node --version"
+  - id: review
+    ai: "Review the current change and list the top 3 risks to verify."
+  - id: approval
+    approval: "Approve running the code task?"
+  - id: code
+    code: "Make the smallest safe improvement and summarize validation."
+`;
+
+export async function initWorkflow(targetPath) {
+  await writeFile(targetPath, STARTER_WORKFLOW, { encoding: "utf8", flag: "wx" });
+}
+
 export function checkWorkflow(source, workflowPath) {
   return parseWorkflow(source, workflowPath);
 }
