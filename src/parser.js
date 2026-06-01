@@ -13,6 +13,7 @@ function normalizeWorkflow(workflow) {
   return {
     name: workflow.name,
     description: workflow.description || "",
+    requires: parseList(workflow.requires || ""),
     steps: workflow.steps.map((step, index) => ({
       id: step.id || `step-${index + 1}`,
       name: step.name || inferStepName(step, index),
@@ -35,6 +36,9 @@ function validateWorkflow(workflow) {
   }
   if (!Array.isArray(workflow.steps) || workflow.steps.length === 0) {
     throw new Error("Workflow must include at least one step.");
+  }
+  if (workflow.requires && typeof workflow.requires !== "string") {
+    throw new Error("Workflow requires must be a comma-separated string.");
   }
 
   const ids = new Set();
@@ -72,6 +76,11 @@ function validateWorkflow(workflow) {
       }
     }
   }
+}
+
+function parseList(value) {
+  if (!value) return [];
+  return value.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
 function parseTinyYaml(source) {

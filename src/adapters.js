@@ -45,6 +45,17 @@ export async function listAdapters() {
   ];
 }
 
+export async function checkRequiredAdapters(requiredAdapters) {
+  if (requiredAdapters.length === 0) return [];
+
+  const adapters = await listAdapters();
+  const byType = new Map(adapters.map((adapter) => [adapter.stepType, adapter]));
+  return requiredAdapters
+    .map((name) => byType.get(name))
+    .filter((adapter) => !adapter || !adapter.detected)
+    .map((adapter, index) => adapter || { stepType: requiredAdapters[index], overrideEnv: null });
+}
+
 export function formatAdapters(adapters) {
   const lines = ["Aegtion adapters", ""];
 

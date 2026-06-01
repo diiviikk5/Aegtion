@@ -60,6 +60,7 @@ The run creates:
 
 ```yaml
 name: landing-page-review
+requires: ai,browser
 steps:
   - shell: "node --version"
   - ai: "Review this landing page copy."
@@ -79,6 +80,7 @@ Supported steps:
 
 Step IDs are optional, but if provided they must be unique and use only letters, numbers, underscores, or hyphens.
 Use `needs: step-id` or `needs: first,second` to skip a step unless its dependencies passed.
+Use top-level `requires: ai,browser,code` when a workflow must fail instead of creating placeholder artifacts.
 
 ## Adapter commands
 

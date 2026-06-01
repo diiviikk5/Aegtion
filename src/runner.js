@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { resolveAdapter, runAdapter } from "./adapters.js";
+import { checkRequiredAdapters, resolveAdapter, runAdapter } from "./adapters.js";
 import { parseWorkflow } from "./parser.js";
 import { createRunDir, writeArtifact, writeReport } from "./report.js";
 
@@ -63,6 +63,7 @@ export async function runWorkflow(source, workflowPath, options = {}) {
   const events = [];
 
   await mkdir(join(runDir, "artifacts"), { recursive: true });
+  await assertRequiredAdapters(workflow);
 
   for (const [index, step] of workflow.steps.entries()) {
     const type = getStepType(step);
@@ -108,6 +109,16 @@ export async function runWorkflow(source, workflowPath, options = {}) {
     : "failed";
   await writeReport(runDir, workflow, events, status);
   return { status, runDir, events };
+}
+
+async function assertRequiredAdapters(workflow) {
+  const missing = await checkRequiredAdapters(workflow.requires);
+  if (missing.length === 0) return;
+  const names = missing.map((adapter) => {
+    const override = adapter.overrideEnv ? ` or set ${adapter.overrideEnv}` : "";
+    return `${adapter.stepType}${override}`;
+  });
+  throw new Error(`Missing required adapter(s): ${names.join(", ")}`);
 }
 
 function getStepType(step) {

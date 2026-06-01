@@ -1,0 +1,11 @@
+name: strict-agent-preview
+description: Example workflow that requires native AI and browser adapters.
+requires: ai,browser
+steps:
+  - id: ai-review
+    ai: "Review the current product change and list the top 3 risks."
+  - id: browser-check
+    browser: "Open the product preview and verify the primary user path."
+  - id: approval
+    needs: ai-review,browser-check
+    approval: "Approve handing the findings to a coding agent?"
