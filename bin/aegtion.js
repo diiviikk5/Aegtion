@@ -19,6 +19,7 @@ Usage:
   aegtion run <workflow.yaml|json> [--yes] [--dry-run]
   aegtion check <workflow.yaml|json>
   aegtion latest <workflow.yaml|json> [--format text|json]
+  aegtion comment <workflow.yaml|json>
   aegtion init [workflow.yaml]
   aegtion doctor
 
@@ -69,6 +70,13 @@ try {
     console.log(`Latest run: ${latest.runDir}`);
     console.log(`Report: ${latest.reportPath}`);
     console.log(`Preview comment: ${latest.previewCommentPath}`);
+    process.exit(0);
+  }
+
+  if (command === "comment") {
+    const latest = await showLatestRun(absolutePath);
+    const comment = await readFile(latest.previewCommentPath, "utf8");
+    console.log(comment);
     process.exit(0);
   }
 
