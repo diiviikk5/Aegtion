@@ -26,6 +26,8 @@ Aegtion is designed around the genre of these projects:
 - [vercel-labs/coding-agent-template](https://github.com/vercel-labs/coding-agent-template) for code-agent task execution patterns
 - [vercel-labs/zerolang](https://github.com/vercel-labs/zerolang) as inspiration for structured agent workflows
 
+See [docs/integrations.md](docs/integrations.md) for the exact adapter mapping.
+
 ## Run it
 
 ```bash
